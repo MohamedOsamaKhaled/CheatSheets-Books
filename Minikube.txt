@@ -1,0 +1,23 @@
+choco install minikube kubernetes-cli -y
+
+
+minikube start --driver=virtualbox --no-vtx-check
+
+
+kubectl create deployment hello-minikube --image=k8s.gcr.io/echoserver:1.10 
+
+
+kubectl get pod
+kubectl get nodes
+kubectl get deploy
+kubectl expose deployment hello-minikube --type=NodePort --port=8080
+minikube service hello-minikube --url
+kubectl get svc
+kubectl get deploy
+kubectl delete svc $serviceName
+kubectl delete deploy $deployName
+
+
+minikube stop
+
+minikube delete 
