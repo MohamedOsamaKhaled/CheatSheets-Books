@@ -28,4 +28,5 @@ ls  /usr/lib/jvm/ -- To check the Java installed
 -- go throw in the page to Maven section
 -- add name and choose the version
 -- Then click on save
+#Jenkins not actaully install the tools when you run the bulid job that time when ever it needs that time it will install
 
