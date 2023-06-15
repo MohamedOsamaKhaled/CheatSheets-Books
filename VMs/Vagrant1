@@ -1,0 +1,46 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+ 
+   config.vm.provider "virtualbox" do |v|
+   v.name = "mdev_env"
+   end
+
+  
+  # Set network as public
+  config.vm.network "public_network"
+
+  # Set box and VM name
+  config.vm.box = "centos/8"
+  config.vm.hostname = "dev-machine"
+
+  # Update packages
+  config.vm.provision "shell",
+    inline: "sudo dnf -y update"
+
+  # Install Docker
+  config.vm.provision "shell",
+    inline: "sudo dnf -y install docker-ce && sudo systemctl start docker && sudo systemctl enable docker"
+
+  # Install Kubernetes
+  config.vm.provision "shell",
+    inline: "sudo dnf -y install kubeadm && sudo systemctl enable --now kubelet"
+
+  # Install OpenShift
+  config.vm.provision "shell",
+    inline: "curl -s https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz | tar zx && sudo mv oc /usr/local/bin"
+
+  # Install Jenkins
+  config.vm.provision "shell",
+    inline: "sudo dnf -y install java-11-openjdk && sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo && sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key && sudo dnf -y install jenkins && sudo systemctl enable jenkins && sudo systemctl start jenkins"
+
+  # Install Nexus
+  config.vm.provision "shell",
+    inline: "sudo dnf -y install wget && sudo wget -O /tmp/nexus.tar.gz https://download.sonatype.com/nexus/3/latest-unix.tar.gz && sudo mkdir -p /opt/nexus && sudo tar xzf /tmp/nexus.tar.gz -C /opt/nexus --strip-components=1 && sudo useradd nexus && sudo chown -R nexus:nexus /opt/nexus && sudo sh -c 'echo \"run_as_user=nexus\" >> /opt/nexus/bin/nexus.vmoptions' && sudo sh -c 'echo \"nexus.scripts.allowCreation=true\" >> /opt/nexus/etc/nexus-default.properties' && sudo sh -c 'echo \"nexus.security.randompassword=false\" >> /opt/nexus/etc/nexus-default.properties' && sudo systemctl enable --now nexus"
+
+  # Install SonarQube
+  config.vm.provision "shell",
+    inline: "sudo dnf -y install wget && sudo wget -O /tmp/sonarqube.zip https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-lts.zip && sudo mkdir -p /opt/sonarqube && sudo unzip /tmp/sonarqube.zip -d /opt/sonarqube && sudo groupadd sonar && sudo useradd -c 'SonarQube' -d /opt/sonarqube -g sonar sonar && sudo chown -R sonar:sonar /opt/sonarqube"
+
+end
