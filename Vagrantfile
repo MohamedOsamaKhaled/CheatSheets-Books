@@ -4,12 +4,16 @@
 Vagrant.configure("2") do |config|
   # Set the base box image
   config.vm.box = "centos/7"
+  
+  config.vm.provider "virtualbox" do |name|
+   name.name = "OC_Dev"
+  end
 
   # Set the hostname of the VM
   config.vm.hostname = "openshift.local"
 
   # Set the IP address of the VM
-  config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.network "public_network"
 
   # Set the provider
   config.vm.provider "virtualbox" do |vb|
